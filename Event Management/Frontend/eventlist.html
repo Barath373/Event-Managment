@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Events</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .event-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .event-list-item {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .event-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .event-property {
+      margin-bottom: 5px;
+    }
+
+    .register-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Events</h1>
+  <ul id="event-list"></ul>
+  <script>
+    const eventList = document.getElementById('event-list');
+
+    async function fetchEvents() {
+      try {
+        const response = await fetch('http://localhost:5000/api/Allevents');
+        const events = await response.json();
+
+        events.forEach(event => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('event-list-item');
+
+          const titleElement = document.createElement('h3');
+          titleElement.classList.add('event-title');
+          titleElement.textContent = event.title;
+
+          const descriptionElement = document.createElement('p');
+          descriptionElement.classList.add('event-property');
+          descriptionElement.textContent = `Description: ${event.description}`;
+
+          const dateObject = new Date(event.date);
+          const timeObject = new Date(event.time);
+
+          const dateElement = document.createElement('p');
+          dateElement.classList.add('event-property');
+          dateElement.textContent = `Date: ${dateObject.toLocaleDateString()}`;
+
+          const timeElement = document.createElement('p');
+          timeElement.classList.add('event-property');
+          if (timeObject) {
+            timeElement.textContent = `Time: ${timeObject.toLocaleTimeString()}`;
+          } else {
+            timeElement.textContent = 'Time: Not available';
+          }
+
+          const ownerIdElement = document.createElement('p');
+          ownerIdElement.classList.add('event-property');
+          ownerIdElement.textContent = `Owner ID: ${event.owner_id}`;
+
+          const registerButton = document.createElement('button');
+          registerButton.classList.add('register-button');
+          registerButton.textContent = 'Register';
+          registerButton.addEventListener('click', () => {
+            registerForEvent(event.id);
+          });
+
+          listItem.appendChild(titleElement);
+          listItem.appendChild(descriptionElement);
+          listItem.appendChild(dateElement);
+          listItem.appendChild(timeElement);
+          listItem.appendChild(ownerIdElement);
+          listItem.appendChild(registerButton);
+
+          eventList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    }
+
+    function registerForEvent(eventId) {
+      // Implement the logic for registering for an event here
+      // For example, you could send a request to the server or display a registration form
+      alert(`Registering for event with ID: ${eventId}`);
+    }
+
+    fetchEvents();
+  </script>
+</body>
+</html>
